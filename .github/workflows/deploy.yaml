@@ -28,6 +28,7 @@ jobs:
           echo "${{ github.workspace }}"
           . $(werf ci-env github --as-file)
           werf cr login -u ${{ secrets.ECR_LOGIN }} -p ${{ secrets.ECR_PASSWORD }} index.docker.io
+          whoami
           werf converge --repo ${{ secrets.ECR_LOGIN }}/opencesear --env development
         env:
             WERF_KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
