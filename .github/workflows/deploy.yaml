@@ -7,11 +7,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-      - if: github.event_name == 'workflow_dispatch'
-        run: ls -alhi /
-        
+    runs-on: [self-hosted, jenkinsdevops]
+    steps:        
       - name: Checkout code
         uses: actions/checkout@v4
         with:
