@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "${{ github.workspace }}"
           . $(werf ci-env github --as-file)
-          werf cr login -u ${{ secrets.ECR_LOGIN }} -p ${{ secrets.ECR_PASSWORD }} 
+          werf cr login -u ${{ secrets.ECR_LOGIN }} -p ${{ secrets.ECR_PASSWORD }} index.docker.io
           # alifbank/opencesear:tagname
           werf
         env:
