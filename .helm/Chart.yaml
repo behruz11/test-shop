@@ -1,0 +1,7 @@
+apiVersion: v2
+name: super-service
+version: 1.0.0
+dependencies:
+- name: flant-apps-library
+  version: ~1
+  repository: "https://pull-charts:n11msjDYWbyzPy3xy2_k@gitlab.alifshop.uz/api/v4/projects/196/packages/helm/stable"
