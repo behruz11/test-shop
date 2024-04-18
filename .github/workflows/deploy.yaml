@@ -14,13 +14,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: werf/actions/install@v1.2
+      # - uses: werf/actions/install@v1.2
         
-      - name: Run script for depoying to kubernetes
-        run: |
-          echo "${{ github.workspace }}"
-          . $(werf ci-env github --as-file)
-          werf helm list
+      # - name: Run script for depoying to kubernetes
+      #   run: |
+      #     echo "${{ github.workspace }}"
+      #     . $(werf ci-env github --as-file)
+      #     werf helm list
           
       - name: Run linux command on ubuntu
         run: |
