@@ -1,5 +1,11 @@
 name: Werf deploy
 
+env:
+  WERF_ENV: development
+  WERF_NAMESPACE: default
+  WERF_VALUES_ENV: .helm/values-envs.yaml
+  WERF_SECRET_VALUES_ENV: .helm/secret-values.yaml
+
 on:
   push:
     branches:
