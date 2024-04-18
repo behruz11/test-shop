@@ -1,0 +1,41 @@
+name: Werf deploy
+
+on:
+  push:
+    branches:
+      - "actions"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - if: github.event_name == 'workflow_dispatch'
+        run: ls -alhi /
+        
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install werf
+        uses: werf/actions/install@v1.2
+        
+      - name: Run script for depoying to kubernetes
+        run: |
+          echo "${{ github.workspace }}"
+          . $(werf ci-env github --as-file)
+          werf helm list
+          
+      - name: Run linux command on ubuntu
+        run: |
+          ls -alhi
+          uname -ar
+          pwd
+          cat /etc/os-release | grep -i "^name"
+      
+        env:
+          WERF_VALUES_ENV: .helm/values-envs.yaml
+          WERF_RELEASE: "test-shop"
+          WERF_SET_ENV_URL: "global.envUrl=opensearch.alif.pk"
+
+          
