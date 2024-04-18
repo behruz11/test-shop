@@ -28,17 +28,14 @@ jobs:
           echo "${{ github.workspace }}"
           . $(werf ci-env github --as-file)
           werf cr login -u ${{ secrets.ECR_LOGIN }} -p ${{ secrets.ECR_PASSWORD }} index.docker.io
-          # alifbank/opencesear:tagname
-          werf
+          werf converge --repo ${{ secrets.ECR_LOGIN }}/opencesear --env development
         env:
             WERF_KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
             WERF_ENV: development
           
       - name: Run linux command on ubuntu
         run: |
-          ls -alhi
           uname -ar
-          pwd
           cat /etc/os-release | grep -i "^name"
       
         env:
