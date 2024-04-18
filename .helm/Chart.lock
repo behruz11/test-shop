@@ -1,0 +1,6 @@
+dependencies:
+- name: flant-apps-library
+  repository: https://pull-charts:n11msjDYWbyzPy3xy2_k@gitlab.alifshop.uz/api/v4/projects/196/packages/helm/stable
+  version: 1.7.9
+digest: sha256:5472429af45115d6f0944ca30c8a6fd04a8f6b506ab1abf63f0fed9ece5ff3ce
+generated: "2023-02-02T00:11:54.2088+07:00"
