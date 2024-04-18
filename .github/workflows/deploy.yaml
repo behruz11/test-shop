@@ -15,8 +15,6 @@ jobs:
           fetch-depth: 0
 
       - uses: werf/actions/install@v1.2
-        with:
-          version: v1.2.9
         
       - name: Run script for depoying to kubernetes
         run: |
