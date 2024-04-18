@@ -21,6 +21,9 @@ jobs:
           echo "${{ github.workspace }}"
           . $(werf ci-env github --as-file)
           werf helm list
+        env:
+            WERF_KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
+            WERF_ENV: development
           
       - name: Run linux command on ubuntu
         run: |
