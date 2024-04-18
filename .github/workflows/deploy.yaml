@@ -20,7 +20,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: werf/actions/install@v1.2
+      - name: Install werf
+        uses: werf/actions/install@v1.2
         
       - name: Run script for depoying to kubernetes
         run: |
