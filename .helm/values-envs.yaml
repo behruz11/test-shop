@@ -1,0 +1,15 @@
+global:
+  _includes:
+    db-envs:
+      DB_HOST:
+        development: localhost
+        production: 127.0.0.1
+      DB_USERNAME:
+        _default: devuser
+        production: produser
+      DB_DATABASE:
+        _default: devdb
+        production: proddb
+      DB_PORT:
+        _default: 5432
+        production: 5432
