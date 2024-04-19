@@ -88,6 +88,20 @@ global:
       _include:
       - apps-initContainer-wait-pgsql
 
+apps-configmaps:
+  service-env-configmap:
+    _include: ["apps-configmaps-defaultConfigmap"]
+    envVars:
+      _include:
+      - app-envs
+
+apps-secrets:
+  service-env-secret:
+    _include: ["apps-configmaps-defaultSecret"]
+    envVars:
+      _include:
+      - app-secret-envs
+
 apps-stateful:
   super-redis:
     _include: [ "apps-stateful-defaultApp" ]
