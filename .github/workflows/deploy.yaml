@@ -44,6 +44,8 @@ jobs:
           WERF_VALUES_ENV: .helm/values-envs.yaml
           WERF_RELEASE: "test-shop"
           WERF_SET_ENABLED: "apps-stateful.super-redis.enabled=true"
+          WERF_SET_CM_ENABLED: "apps-configmaps.service-env-configmap.enabled=true"
+          WERF_SET_SECRET_ENABLED: "apps-secrets.service-env-secret.enabled=true"
           WERF_SET_ENV_URL: "global.envUrl=opensearch.alif.pk"
 
           
