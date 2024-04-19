@@ -3,6 +3,7 @@ name: Werf deploy
 env:
   WERF_ENV: development
   WERF_NAMESPACE: default
+  WERF_SECRET_KEY: ${{ secrets.WERF_SECRET_KEY }}
   WERF_VALUES_ENV: .helm/values-envs.yaml
   WERF_SECRET_VALUES_ENV: .helm/secret-values.yaml
 
@@ -29,7 +30,6 @@ jobs:
           # . $(werf ci-env github --as-file)
           source $("/home/deployer/bin/trdl" use werf "1.2" "stable")
           werf cr login -u ${{ secrets.ECR_LOGIN }} -p ${{ secrets.ECR_PASSWORD }} index.docker.io
-          whoami
           werf converge --repo ${{ secrets.ECR_LOGIN }}/opencesear --env development
         env:
             WERF_KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
@@ -43,7 +43,6 @@ jobs:
         env:
           WERF_VALUES_ENV: .helm/values-envs.yaml
           WERF_RELEASE: "test-shop"
-          WERF_SECRET_KEY: ${{ secrets.WERF_SECRET_KEY }}
           WERF_SET_ENV_URL: "global.envUrl=opensearch.alif.pk"
 
           
