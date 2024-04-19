@@ -25,3 +25,94 @@ global:
       priorityClassName:
         _default: "production-medium"
         production: "production-high"
+
+    ## Конфигурация по умолчанию для приложения в целом.
+    apps-stateless-defaultApp:
+      enabled: false
+      _include:
+      - apps-default-imagePullSecrets
+      - apps-default-priorityClassName
+      - apps-default-nodeAffinityAndTolerations
+      revisionHistoryLimit: 3
+      annotations: |
+        pod-reloader.deckhouse.io/auto: "true"
+      strategy:
+        _default: |
+          rollingUpdate:
+            maxSurge: 20%
+            maxUnavailable: 50%
+          type: RollingUpdate
+        production: |
+          rollingUpdate:
+            maxSurge: 20%
+            maxUnavailable: 25%
+          type: RollingUpdate
+      podDisruptionBudget:
+        enabled: true
+        maxUnavailable: "15%"
+      horizontalPodAutoscaler:
+        enabled:
+          _default: false
+
+    apps-jobs-defaultJob:
+      enabled: false
+      _include:
+      - apps-default-imagePullSecrets
+      - apps-default-priorityClassName
+      - apps-default-nodeAffinityAndTolerations
+      restartPolicy: "Never"
+
+    ## Конфигурация по умолчанию для инит-контейнера приложения.
+    apps-initContainer-wait-pgsql:
+      wait-pgsql:
+        image:
+          name: "postgres_client"
+        command:
+          - /bin/sh
+          - -c
+          - |
+            until psql -h ${DB_HOST} -U ${DB_USERNAME} -d ${DB_DATABASE} -p ${DB_PASSWORD}
+            --execute=\"SELECT 1;\"; do echo waiting for pgsql; sleep 2; done;
+        envVars:
+          _include:
+          - db-envs
+        resources:
+          requests:
+            mcpu: 50
+            memoryMb: 50
+          limits:
+            mcpu: null
+            memoryMb: 50
+
+    initContainers:
+      _include:
+      - apps-initContainer-wait-pgsql
+
+  super-redis:
+    _include: [ "apps-stateful-defaultApp" ]
+    replicas:
+      _default: 1
+    containers:
+      main:
+        image:
+          name: redis
+        ports: |
+          - name: redis
+            containerPort: 6379
+        resources:
+          requests:
+            cpu:
+              _default: 50m
+              production: 100m
+            memory:
+              _default: 100Mi
+          limits:
+            memory:
+              _default: 200Mi
+    service:
+      enabled: true
+      ports: |
+        - name: {{ $.CurrentApp.name }}
+          port: 6379
+    verticalPodAutoscaler:
+      enabled: false
