@@ -104,7 +104,8 @@ apps-secrets:
 
 apps-stateful:
   super-redis:
-    _include: [ "apps-stateful-defaultApp" ]
+    _include:
+      - apps-default-imagePullSecrets
     replicas:
       _default: 1
     containers:
