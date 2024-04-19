@@ -118,10 +118,6 @@ global:
             mcpu: null
             memoryMb: 50
 
-    initContainers:
-      _include:
-      - apps-initContainer-wait-pgsql
-
 apps-configmaps:
   service-env-configmap:
     _include: ["apps-configmaps-defaultConfigmap"]
@@ -136,18 +132,18 @@ apps-secrets:
       _include:
       - app-secret-envs
 
-apps-stateful:
+apps-stateless:
   super-redis:    
-    _include: [ "apps-stateful-defaultApp" ]
+    _include: [ "apps-stateless-defaultApp" ]
     replicas:
       _default: 1
     containers:
       main:
         image:
-          name: redis
+          name: nginx
         ports: |
-          - name: redis
-            containerPort: 6379
+          - name: nginx
+            containerPort: 80
         resources:
           requests:
             cpu:
@@ -162,7 +158,7 @@ apps-stateful:
       enabled: true
       ports: |
         - name: {{ $.CurrentApp.name }}
-          port: 6379
+          port: 80
     verticalPodAutoscaler:
       enabled: false
 
