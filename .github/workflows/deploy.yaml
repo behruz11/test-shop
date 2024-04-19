@@ -9,6 +9,7 @@ env:
   WERF_PASSWORD: ${{ secrets.ECR_PASSWORD }}
   WERF_VALUES_ENV: .helm/values-envs.yaml
   WERF_SECRET_VALUES_ENV: .helm/secret-values.yaml
+  # WERF_KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
   
 on:
   push:
@@ -42,7 +43,6 @@ jobs:
           kube-config-base64-data: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
           
         env:
-          # WERF_KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
           WERF_ENV: development
           WERF_VALUES_ENV: .helm/values-envs.yaml
           WERF_RELEASE: "test-shop"
@@ -51,5 +51,3 @@ jobs:
           WERF_SET_CM_ENABLED: "apps-configmaps.service-env-configmap.enabled=true"
           WERF_SET_SECRET_ENABLED: "apps-secrets.service-env-secret.enabled=true"
           WERF_SET_ENV_URL: "global.envUrl=opensearch.alif.pk"
-
-          
