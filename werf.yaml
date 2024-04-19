@@ -12,3 +12,75 @@ from: redis:6.2.6-alpine
 ---
 image: php-fpm
 from: php:8.1-fpm-alpine
+{{- include "php-shell-base" . }}
+---
+image: php-cli
+from: php:8.1-cli-alpine
+{{- include "php-shell-base" . }}
+---
+{{- define "php-shell-base" }} 
+shell:
+  beforeInstall:
+  - apk add --no-cache git nano curl
+  install:
+  - curl -sSLf -o /usr/local/bin/install-php-extensions https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions
+  - chmod +x /usr/local/bin/install-php-extensions
+  - /usr/local/bin/install-php-extensions bcmath apcu calendar mysqli opcache exif mcrypt pdo_pgsql pgsql zip pdo_mysql pcntl intl soap sockets redis mongodb gd 
+{{- end }}
+---
+image: backend 
+fromImage: php-fpm
+{{- include "make-app" . }}
+---
+image: cli
+fromImage: php-cli
+{{- include "make-app" . }}
+---
+{{- define "make-app" }}
+docker:
+  WORKDIR: /app
+  USER: www-data
+import:
+- image: php-fpm-builder
+  add: /app
+  to: /app
+  after: setup
+  owner: www-data
+  group: www-data
+shell:
+  beforeInstall:
+  - ln -s $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
+{{- end }} 
+---
+image: nginx
+from: nginx:1.23-alpine
+docker:
+  WORKDIR: /app/public
+import: 
+- image: php-fpm-builder
+  add: /app/public
+  to: /app/public
+  after: setup
+---
+image: php-fpm-builder
+fromImage: php-fpm
+git:
+- add: /
+  to: /app
+  excludePaths:
+  - .helm
+  - werf*.yaml
+  stageDependencies:
+    install:
+    - "composer.json" 
+    - "composer.lock"
+    setup: 
+    - "**/*"
+shell:
+  beforeInstall:
+  - curl -s https://getcomposer.org/composer.phar > /usr/local/bin/composer
+  - chmod a+x /usr/local/bin/composer
+  install:
+  - cd /app
+  - composer install --no-dev --prefer-dist --no-progress --no-scripts --optimize-autoloader 
+---
