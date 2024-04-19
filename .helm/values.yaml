@@ -131,3 +131,26 @@ apps-stateful:
           port: 6379
     verticalPodAutoscaler:
       enabled: false
+
+
+apps-ingresses:
+  service-client:
+    _include: ["apps-ingresses-defaultIngress"]
+    infra_envs:
+      _include:
+      - app-envs
+    ingressClassName: "nginx"
+    annotations: |
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+      nginx.ingress.kubernetes.io/proxy-body-size: "20m"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    host: '{{ $.Values.global.envUrl }}'
+    paths: |
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: '{{ $.CurrentApp.name }}'
+            port:
+              number: 80
