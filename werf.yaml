@@ -3,8 +3,9 @@ configVersion: 1
 ---
 
 image: php-fpm
-from: php:8.1-fpm-alpine
+from: php:8.2-fpm-alpine
 {{- include "php-shell-base" . }}
+
 ---
 
 {{- define "php-shell-base" }}
