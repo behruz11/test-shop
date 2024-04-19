@@ -27,16 +27,22 @@ jobs:
       # - name: Install werf
       #   uses: werf/actions/install@v1.2
         
-      - name: Run script for depoying to kubernetes
-        run: |
-          echo "${{ github.workspace }}"
-          # . $(werf ci-env github --as-file)
-          source $("/home/deployer/bin/trdl" use werf "1.2" "stable")
-          werf cr login index.docker.io #-u ${{ secrets.ECR_LOGIN }} -p ${{ secrets.ECR_PASSWORD }} index.docker.io
-          werf converge #--repo ${{ secrets.ECR_LOGIN }}/opencesear --env development
+      # - name: Run script for depoying to kubernetes
+      #   run: |
+      #     echo "${{ github.workspace }}"
+      #     # . $(werf ci-env github --as-file)
+      #     source $("/home/deployer/bin/trdl" use werf "1.2" "stable")
+      #     werf cr login index.docker.io #-u ${{ secrets.ECR_LOGIN }} -p ${{ secrets.ECR_PASSWORD }} index.docker.io
+      #     werf converge #--repo ${{ secrets.ECR_LOGIN }}/opencesear --env development
 
+      - name: Converge
+        uses: werf/actions/converge@v1.2
+        with:
+          env: development
+          kube-config-base64-data: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
+          
         env:
-          WERF_KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
+          # WERF_KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
           WERF_ENV: development
           WERF_VALUES_ENV: .helm/values-envs.yaml
           WERF_RELEASE: "test-shop"
