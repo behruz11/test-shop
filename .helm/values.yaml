@@ -136,9 +136,9 @@ apps-secrets:
       _include:
       - app-secret-envs
 
-apps-stateful:
-  super-redis:
-    _include: ["apps-stateful-defaultApp"]
+apps-stateles:
+  super-redis:    
+    _include: [ "apps-stateful-defaultApp" ]
     replicas:
       _default: 1
     containers:
