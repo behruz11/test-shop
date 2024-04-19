@@ -26,7 +26,8 @@ jobs:
       - name: Run script for depoying to kubernetes
         run: |
           echo "${{ github.workspace }}"
-          . $(werf ci-env github --as-file)
+          # . $(werf ci-env github --as-file)
+          source $("/home/deployer/bin/trdl" use werf "1.2" "stable")
           werf cr login -u ${{ secrets.ECR_LOGIN }} -p ${{ secrets.ECR_PASSWORD }} index.docker.io
           whoami
           werf converge --repo ${{ secrets.ECR_LOGIN }}/opencesear --env development
