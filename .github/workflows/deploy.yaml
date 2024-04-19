@@ -43,6 +43,7 @@ jobs:
         env:
           WERF_VALUES_ENV: .helm/values-envs.yaml
           WERF_RELEASE: "test-shop"
+          WERF_SECRET_KEY: ${{ secrets.WERF_SECRET_KEY }}
           WERF_SET_ENV_URL: "global.envUrl=opensearch.alif.pk"
 
           
