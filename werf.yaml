@@ -10,8 +10,6 @@ from: php:8.1-fpm-alpine
 {{- define "php-shell-base" }}
 
 shell:
-  beforeInstall:
-  - apk update
   install:
   - curl -sSLf -o /usr/local/bin/install-php-extensions https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions
   - chmod +x /usr/local/bin/install-php-extensions
