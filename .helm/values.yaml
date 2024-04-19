@@ -31,8 +31,6 @@ global:
       enabled: false
       _include:
       - apps-default-imagePullSecrets
-      - apps-default-priorityClassName
-      - apps-default-nodeAffinityAndTolerations
       revisionHistoryLimit: 3
       annotations: |
         pod-reloader.deckhouse.io/auto: "true"
@@ -53,6 +51,42 @@ global:
       horizontalPodAutoscaler:
         enabled:
           _default: false
+
+    ## Конфигурация по умолчанию для приложения в целом.
+    apps-stateful-defaultApp:
+      _include:
+        - apps-default-enabled
+        - apps-default-imagePullSecrets
+      revisionHistoryLimit: 3
+      annotations: |
+        pod-reloader.deckhouse.io/auto: "true"
+      strategy:
+        _default: |
+          rollingUpdate:
+            maxSurge: 20%
+            maxUnavailable: 50%
+          type: RollingUpdate
+        production: |
+          rollingUpdate:
+            maxSurge: 20%
+            maxUnavailable: 25%
+          type: RollingUpdate
+      podDisruptionBudget:
+        enabled: true
+        maxUnavailable: "15%"
+      verticalPodAutoscaler:
+        enabled: true
+        updateMode:
+          _default: "Auto"
+          production: "Off"
+        resourcePolicy: |
+          {}
+      horizontalPodAutoscaler:
+        enabled:
+          _default: false
+      service:
+        enabled: false
+        name: "{{ $.CurrentApp.name }}"
 
     apps-jobs-defaultJob:
       enabled: false
@@ -104,8 +138,7 @@ apps-secrets:
 
 apps-stateful:
   super-redis:
-    _include:
-      - apps-default-imagePullSecrets
+    _include: ["apps-stateful-defaultApp"]
     replicas:
       _default: 1
     containers:
