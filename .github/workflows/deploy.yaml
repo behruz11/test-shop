@@ -31,20 +31,14 @@ jobs:
           source $("/home/deployer/bin/trdl" use werf "1.2" "stable")
           werf cr login -u ${{ secrets.ECR_LOGIN }} -p ${{ secrets.ECR_PASSWORD }} index.docker.io
           werf converge --repo ${{ secrets.ECR_LOGIN }}/opencesear --env development
+
         env:
-            WERF_KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
-            WERF_ENV: development
-          
-      - name: Run linux command on ubuntu
-        run: |
-          uname -ar
-          cat /etc/os-release | grep -i "^name"
-      
-        env:
+          WERF_KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
+          WERF_ENV: development
           WERF_VALUES_ENV: .helm/values-envs.yaml
           WERF_RELEASE: "test-shop"
           WERF_SET_INGRESS_ENABLED: "apps-ingresses.test-shop.enabled=true"
-          WERF_SET_ENABLED: "apps-stateful.super-redis.enabled=true"
+          WERF_SET_STS_APP_ENABLED: "apps-stateful.super-redis.enabled=true"
           WERF_SET_CM_ENABLED: "apps-configmaps.service-env-configmap.enabled=true"
           WERF_SET_SECRET_ENABLED: "apps-secrets.service-env-secret.enabled=true"
           WERF_SET_ENV_URL: "global.envUrl=opensearch.alif.pk"
