@@ -134,7 +134,7 @@ apps-stateful:
 
 
 apps-ingresses:
-  service-client:
+  test-shop:
     _include: ["apps-ingresses-defaultIngress"]
     infra_envs:
       _include:
