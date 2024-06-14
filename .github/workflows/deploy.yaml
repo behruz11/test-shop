@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # runs-on: [self-hosted, jenkinsdevops]
     services:
       postgres1:
         image: postgres:latest
@@ -44,6 +43,7 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -64,7 +64,7 @@ jobs:
         psql -h localhost -p 5433 -U user2 -d db2 -c "CREATE TABLE test (id SERIAL PRIMARY KEY, data VARCHAR(100));"
       env:
         PGPASSWORD: password
-        
+
     - name: Run Python script
       run: python3 connect_postgres.py
       env:
