@@ -22,7 +22,7 @@ jobs:
         env:
           POSTGRES_DB: db1
           POSTGRES_USER: user1
-          POSTGRES_PASSWORD: password1
+          POSTGRES_PASSWORD: password
 
       postgres2:
         image: postgres:latest
@@ -36,7 +36,7 @@ jobs:
         env:
           POSTGRES_DB: db2
           POSTGRES_USER: user2
-          POSTGRES_PASSWORD: password2
+          POSTGRES_PASSWORD: password
 
     steps:
     - uses: actions/checkout@v4
@@ -48,6 +48,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
     - name: Wait for PostgreSQL to be ready
       run: |
         while ! nc -z localhost 5432; do
@@ -56,6 +57,14 @@ jobs:
         while ! nc -z localhost 5433; do
           sleep 1
         done
+
+    - name: Initialize databases
+      run: |
+        psql -h localhost -p 5432 -U user1 -d db1 -c "CREATE TABLE test (id SERIAL PRIMARY KEY, data VARCHAR(100));"
+        psql -h localhost -p 5433 -U user2 -d db2 -c "CREATE TABLE test (id SERIAL PRIMARY KEY, data VARCHAR(100));"
+      env:
+        PGPASSWORD: password
+        
     - name: Run Python script
       run: python3 connect_postgres.py
       env:
@@ -63,9 +72,9 @@ jobs:
         POSTGRES1_PORT: 5432
         POSTGRES1_DB: db1
         POSTGRES1_USER: user1
-        POSTGRES1_PASSWORD: password1
+        POSTGRES1_PASSWORD: password
         POSTGRES2_HOST: localhost
         POSTGRES2_PORT: 5433
         POSTGRES2_DB: db2
         POSTGRES2_USER: user2
-        POSTGRES2_PASSWORD: password2
+        POSTGRES2_PASSWORD: password
