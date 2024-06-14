@@ -1,53 +1,63 @@
-name: Werf deploy
-
-env:
-  WERF_ENV: development
-  WERF_NAMESPACE: default
-  WERF_REPO: ${{ secrets.ECR_LOGIN }}/opencesear
-  WERF_SECRET_KEY: ${{ secrets.WERF_SECRET_KEY }}
-  WERF_USERNAME: ${{ secrets.ECR_LOGIN }}
-  WERF_PASSWORD: ${{ secrets.ECR_PASSWORD }}
-  WERF_VALUES_ENV: .helm/values-envs.yaml
-  WERF_SECRET_VALUES_ENV: .helm/secret-values.yaml
-  # WERF_KUBECONFIG_BASE64: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
+name: Service
   
 on:
   push:
     branches:
-      - "actions"
+      - "services"
 
 jobs:
   build:
-    runs-on: [self-hosted, jenkinsdevops]
-    steps:        
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # - name: Install werf
-      #   uses: werf/actions/install@v1.2
-        
-      # - name: Run script for depoying to kubernetes
-      #   run: |
-      #     echo "${{ github.workspace }}"
-      #     # . $(werf ci-env github --as-file)
-      #     source $("/home/deployer/bin/trdl" use werf "1.2" "stable")
-      #     werf cr login index.docker.io #-u ${{ secrets.ECR_LOGIN }} -p ${{ secrets.ECR_PASSWORD }} index.docker.io
-      #     werf converge #--repo ${{ secrets.ECR_LOGIN }}/opencesear --env development
-
-      - name: Converge
-        uses: werf/actions/converge@v1.2
-        with:
-          env: development
-          kube-config-base64-data: ${{ secrets.KUBE_CONFIG_BASE64_DATA }}
-          
+    runs-on: ubuntu-latest
+    # runs-on: [self-hosted, jenkinsdevops]
+    services:
+      postgres1:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
         env:
-          WERF_ENV: development
-          WERF_VALUES_ENV: .helm/values-envs.yaml
-          WERF_RELEASE: "test-shop"
-          WERF_SET_INGRESS_ENABLED: "apps-ingresses.test-shop.enabled=true"
-          WERF_SET_STS_APP_ENABLED: "apps-stateless.super-redis.enabled=true"
-          WERF_SET_CM_ENABLED: "apps-configmaps.service-env-configmap.enabled=true"
-          WERF_SET_SECRET_ENABLED: "apps-secrets.service-env-secret.enabled=true"
-          WERF_SET_ENV_URL: "global.envUrl=opensearch.alif.pk"
+          POSTGRES_DB: db1
+          POSTGRES_USER: user1
+          POSTGRES_PASSWORD: password1
+
+      postgres2:
+        image: postgres:latest
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        env:
+          POSTGRES_DB: db2
+          POSTGRES_USER: user2
+          POSTGRES_PASSWORD: password2
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        while ! nc -z localhost 5432; do
+          sleep 1
+        done
+        while ! nc -z localhost 5433; do
+          sleep 1
+        done
+    - name: Run Python script
+      run: python3 connect_postgres.py
+      env:
+        POSTGRES1_HOST: localhost
+        POSTGRES1_PORT: 5432
+        POSTGRES1_DB: db1
+        POSTGRES1_USER: user1
+        POSTGRES1_PASSWORD: password1
+        POSTGRES2_HOST: localhost
+        POSTGRES2_PORT: 5433
+        POSTGRES2_DB: db2
+        POSTGRES2_USER: user2
+        POSTGRES2_PASSWORD: password2
