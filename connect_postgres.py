@@ -28,7 +28,7 @@ def connect_to_postgres(host, port, dbname, user, password):
         print(f"Current user: {current_user[0]}\n")
 
         # Запрос для получения данных из таблицы test
-        cursor.execute("SELECT * FROM test limit 25;")
+        cursor.execute("SELECT * FROM test;")
         records = cursor.fetchall()
         
         print(f"Data from table 'test':")
