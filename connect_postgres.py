@@ -26,6 +26,15 @@ def connect_to_postgres(host, port, dbname, user, password):
         print(f"Connected to PostgreSQL server - {version[0]}")
         print(f"Current database: {current_db[0]}")
         print(f"Current user: {current_user[0]}\n")
+
+        # Запрос для получения данных из таблицы test
+        cursor.execute("SELECT * FROM test limit 25;")
+        records = cursor.fetchall()
+        
+        print(f"Data from table 'test':")
+        for row in records:
+            print(row)
+
     except (Exception, psycopg2.Error) as error:
         print(f"Error while connecting to PostgreSQL: {error}")
     finally:
