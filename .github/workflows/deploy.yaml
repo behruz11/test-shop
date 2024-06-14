@@ -61,7 +61,9 @@ jobs:
     - name: Initialize databases
       run: |
         psql -h localhost -p 5432 -U user1 -d db1 -c "CREATE TABLE test (id SERIAL PRIMARY KEY, data VARCHAR(100));"
+        psql -h localhost -p 5432 -U user1 -d db1 -c "INSERT INTO test (data) VALUES ('Master data 1'), ('Master data 2');"
         psql -h localhost -p 5433 -U user2 -d db2 -c "CREATE TABLE test (id SERIAL PRIMARY KEY, data VARCHAR(100));"
+        psql -h localhost -p 5433 -U user2 -d db2 -c "INSERT INTO test (data) VALUES ('Replica data 1'), ('Replica data 2');"
       env:
         PGPASSWORD: password
 
