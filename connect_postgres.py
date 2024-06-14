@@ -11,9 +11,21 @@ def connect_to_postgres(host, port, dbname, user, password):
             password=password
         )
         cursor = connection.cursor()
+        # Выполнение запроса для получения информации о версии PostgreSQL
         cursor.execute("SELECT version();")
-        record = cursor.fetchone()
-        print(f"You are connected to - {record}\n")
+        version = cursor.fetchone()
+        
+        # Выполнение запроса для получения текущей базы данных
+        cursor.execute("SELECT current_database();")
+        current_db = cursor.fetchone()
+        
+        # Выполнение запроса для получения текущего пользователя
+        cursor.execute("SELECT current_user;")
+        current_user = cursor.fetchone()
+        
+        print(f"Connected to PostgreSQL server - {version[0]}")
+        print(f"Current database: {current_db[0]}")
+        print(f"Current user: {current_user[0]}\n")
     except (Exception, psycopg2.Error) as error:
         print(f"Error while connecting to PostgreSQL: {error}")
     finally:
@@ -23,7 +35,8 @@ def connect_to_postgres(host, port, dbname, user, password):
             print("PostgreSQL connection is closed")
 
 if __name__ == "__main__":
-    # Connect to first PostgreSQL instance
+    # Подключение к первому экземпляру PostgreSQL
+    print("Connecting to first PostgreSQL instance...")
     connect_to_postgres(
         host=os.getenv("POSTGRES1_HOST"),
         port=os.getenv("POSTGRES1_PORT"),
@@ -31,7 +44,9 @@ if __name__ == "__main__":
         user=os.getenv("POSTGRES1_USER"),
         password=os.getenv("POSTGRES1_PASSWORD")
     )
-    # Connect to second PostgreSQL instance
+    
+    # Подключение ко второму экземпляру PostgreSQL
+    print("Connecting to second PostgreSQL instance...")
     connect_to_postgres(
         host=os.getenv("POSTGRES2_HOST"),
         port=os.getenv("POSTGRES2_PORT"),
